@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Download } from "lucide-react";
+import html2pdf from "html2pdf.js";
 
 const navItems = [
   { label: "Home", path: "/" },
@@ -13,6 +14,18 @@ const navItems = [
 const Navbar = () => {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleDownloadPDF = () => {
+    const element = document.querySelector("main") || document.body;
+    const opt = {
+      margin: 0.5,
+      filename: "Nishanth_Portfolio.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
+    };
+    html2pdf().set(opt).from(element).save();
+  };
 
   return (
     <motion.header
@@ -52,12 +65,20 @@ const Navbar = () => {
           ))}
         </ul>
 
-        <Link
-          to="/contact"
-          className="hidden md:inline-flex px-5 py-2 text-sm font-medium rounded-lg bg-gradient-primary text-primary-foreground hover:opacity-90 transition-opacity"
-        >
-          Hire Me
-        </Link>
+        <div className="hidden md:flex items-center gap-2">
+          <button
+            onClick={handleDownloadPDF}
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-border bg-card text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors"
+          >
+            <Download size={14} /> PDF
+          </button>
+          <Link
+            to="/contact"
+            className="inline-flex px-5 py-2 text-sm font-medium rounded-lg bg-gradient-primary text-primary-foreground hover:opacity-90 transition-opacity"
+          >
+            Hire Me
+          </Link>
+        </div>
 
         {/* Mobile toggle */}
         <button
@@ -94,6 +115,14 @@ const Navbar = () => {
                   </Link>
                 </li>
               ))}
+              <li>
+                <button
+                  onClick={() => { handleDownloadPDF(); setMobileOpen(false); }}
+                  className="block w-full px-4 py-3 text-left text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-surface rounded-lg transition-colors"
+                >
+                  <Download size={14} className="inline mr-2" /> Download PDF
+                </button>
+              </li>
               <li>
                 <Link
                   to="/contact"
